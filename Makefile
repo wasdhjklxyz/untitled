@@ -21,5 +21,5 @@ rebuild:
 	docker build --no-cache --target busybox-builder -t $(IMAGE_NAME)-busybox .
 
 clean:
-	rm -rf $(BUILD_DIR)
+	sudo rm -rf $(BUILD_DIR)
 	docker rmi $(IMAGE_NAME)-kernel $(IMAGE_NAME)-busybox 2>/dev/null || true
