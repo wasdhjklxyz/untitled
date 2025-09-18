@@ -50,4 +50,14 @@ RUN wget https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2 && \
   make O=${BUSYBOX_BUILD} allnoconfig
 
 WORKDIR ${BUSYBOX_BUILD}
-RUN make LDFLAGS="-static" CONFIG_STATIC=y -j$(nproc)
+RUN make LDFLAGS="-static" CONFIG_STATIC=y -j$(nproc) && make install
+
+FROM base AS initramfs-builder
+COPY scripts/initramfs-init.sh /tmp/init
+COPY --from=busybox-builder /busybox/_install /initramfs
+
+RUN mkdir -p /initramfs/{bin,sbin,etc,proc,sys,usr/bin,usr/sbin} && \
+  cp /tmp/init /initramfs/init && \
+  chmod +x /initramfs/init && \
+  cd /initramfs && \
+  find . -print0 | cpio --null -ov --format=newc | gzip -9 > /initramfs.cpio.gz

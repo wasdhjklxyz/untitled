@@ -8,6 +8,7 @@ all: extract
 build:
 	docker build --target kernel-builder -t $(IMAGE_NAME)-kernel .
 	docker build --target busybox-builder -t $(IMAGE_NAME)-busybox .
+	docker build --target initramfs-builder -t $(IMAGE_NAME)-initramfs .
 
 extract: build
 	mkdir -p $(BUILD_DIR)
@@ -15,11 +16,17 @@ extract: build
 		sh -c "cp -r /kernel /host"
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-busybox \
 		sh -c "cp -r /busybox /host"
+	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-initramfs \
+		sh -c "cp /initramfs.cpio.gz /host"
 
 rebuild:
 	docker build --no-cache --target kernel-builder -t $(IMAGE_NAME)-kernel .
 	docker build --no-cache --target busybox-builder -t $(IMAGE_NAME)-busybox .
+	docker build --no-cache --target initramfs-builder -t $(IMAGE_NAME)-initramfs .
 
 clean:
 	sudo rm -rf $(BUILD_DIR)
-	docker rmi $(IMAGE_NAME)-kernel $(IMAGE_NAME)-busybox 2>/dev/null || true
+	docker rmi \
+		$(IMAGE_NAME)-kernel \
+		$(IMAGE_NAME)-busybox \
+		$(IMAGE_NAME)-initramfs 2>/dev/null || true
