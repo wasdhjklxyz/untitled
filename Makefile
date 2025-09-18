@@ -12,9 +12,9 @@ build:
 extract: build
 	mkdir -p $(BUILD_DIR)
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-kernel \
-		sh -c "cp -r /output/kernel /host"
+		sh -c "cp -r /kernel /host"
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-busybox \
-		sh -c "cp -r /output/busybox /host"
+		sh -c "cp -r /busybox /host"
 
 rebuild:
 	docker build --no-cache --target kernel-builder -t $(IMAGE_NAME)-kernel .

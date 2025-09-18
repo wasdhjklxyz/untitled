@@ -13,7 +13,7 @@ RUN apk add --no-cache \
 
 WORKDIR /src
 ENV KERNEL_VERSION=6.12.47
-ENV KERNEL_BUILD=/output/kernel
+ENV KERNEL_BUILD=/kernel
 
 RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}.tar.xz && \
   tar -xf linux-${KERNEL_VERSION}.tar.xz && \
@@ -41,7 +41,7 @@ RUN /src/linux-${KERNEL_VERSION}/scripts/config \
 FROM base AS busybox-builder
 WORKDIR /src
 ENV BUSYBOX_VERSION=1.36.1
-ENV BUSYBOX_BUILD=/output/busybox
+ENV BUSYBOX_BUILD=/busybox
 
 RUN wget https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2 && \
   tar -xf busybox-${BUSYBOX_VERSION}.tar.bz2 && \
