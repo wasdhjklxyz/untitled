@@ -51,7 +51,7 @@ FROM base AS initramfs-builder
 COPY scripts/initramfs-init.sh /tmp/init
 RUN mkdir -p /initramfs
 COPY --from=busybox-builder /busybox/_install/* /initramfs
-RUN mkdir -p /initramfs/bin \
+RUN mkdir -p /initramfs/bin /initramfs/proc /initramfs/sys \
     && cp /initramfs/busybox /initramfs/bin/busybox \
     && ln -sf busybox /initramfs/bin/sh \
     && cp /tmp/init /initramfs/init \
