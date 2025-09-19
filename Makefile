@@ -15,7 +15,7 @@ extract: build
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
 		$(IMAGE_NAME)-kernel sh -c "cp /kernel/arch/x86_64/boot/bzImage /host"
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
-		$(IMAGE_NAME)-initramfs sh -c "cp /initramfs.cpio.gz /host"
+		$(IMAGE_NAME)-initramfs sh -c "cp /initramfs.cpio /host"
 
 extract-all: build
 	mkdir -p $(BUILD_DIR)
@@ -25,7 +25,7 @@ extract-all: build
 		$(IMAGE_NAME)-busybox sh -c "cp -r /busybox /host"
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
 		$(IMAGE_NAME)-initramfs \
-		sh -c "cp -r /initramfs /host && cp /initramfs.cpio.gz /host"
+		sh -c "cp -r /initramfs /host && cp /initramfs.cpio /host"
 
 rebuild:
 	docker build --no-cache \
@@ -39,14 +39,14 @@ rebuild:
 test: extract
 	qemu-system-x86_64 \
 		-kernel $(BUILD_DIR)/bzImage \
-		-initrd $(BUILD_DIR)/initramfs.cpio.gz \
+		-initrd $(BUILD_DIR)/initramfs.cpio \
 		-nographic \
 		-append "console=ttyS0 panic=1" \
 		-no-reboot \
 		-enable-kvm 2>/dev/null || \
 	qemu-system-x86_64 \
 		-kernel $(BUILD_DIR)/bzImage \
-		-initrd $(BUILD_DIR)/initramfs.cpio.gz \
+		-initrd $(BUILD_DIR)/initramfs.cpio \
 		-nographic \
 		-no-reboot \
 		-append "console=ttyS0 panic=1"

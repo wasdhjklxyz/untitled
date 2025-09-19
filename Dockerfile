@@ -57,7 +57,4 @@ COPY --from=busybox-builder /busybox/_install/usr/sbin /initramfs/usr/sbin
 RUN cp /tmp/init /initramfs/init \
     && chmod +x /initramfs/init
 WORKDIR /initramfs
-RUN find . -print0 \
-    | cpio --null -ov --format=newc \
-    | gzip -9 \
-    > /initramfs.cpio.gz
+RUN find . | cpio -ov --format=newc > /initramfs.cpio
