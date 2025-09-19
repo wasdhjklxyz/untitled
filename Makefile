@@ -12,17 +12,19 @@ build:
 
 extract: build
 	mkdir -p $(BUILD_DIR)
-	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-kernel \
-		sh -c "cp -r /kernel /host"
-	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-busybox \
-		sh -c "cp -r /busybox /host"
-	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host $(IMAGE_NAME)-initramfs \
-		sh -c "cp /initramfs.cpio.gz /host"
+	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
+		$(IMAGE_NAME)-kernel sh -c "cp /kernel/arch/x86_64/boot/bzImage /host"
+	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
+		$(IMAGE_NAME)-initramfs sh -c "cp /initramfs.cpio.gz /host"
 
 rebuild:
-	docker build --no-cache --target kernel-builder -t $(IMAGE_NAME)-kernel .
-	docker build --no-cache --target busybox-builder -t $(IMAGE_NAME)-busybox .
-	docker build --no-cache --target initramfs-builder -t $(IMAGE_NAME)-initramfs .
+	docker build --no-cache \
+		--target kernel-builder -t $(IMAGE_NAME)-kernel .
+	docker build --no-cache \
+		--target busybox-builder -t $(IMAGE_NAME)-busybox .
+	docker build --no-cache \
+		--target initramfs-builder -t $(IMAGE_NAME)-initramfs .
+	$(MAKE) extract
 
 clean:
 	sudo rm -rf $(BUILD_DIR)
