@@ -1,7 +1,7 @@
 IMAGE_NAME := untitled
 BUILD_DIR := build
 
-.PHONY: all build extract rebuild clean help
+.PHONY: all build extract rebuild test clean help
 
 all: extract
 
@@ -26,6 +26,21 @@ rebuild:
 		--target initramfs-builder -t $(IMAGE_NAME)-initramfs .
 	$(MAKE) extract
 
+test: extract
+	qemu-system-x86_64 \
+		-kernel $(BUILD_DIR)/bzImage \
+		-initrd $(BUILD_DIR)/initramfs.cpio.gz \
+		-nographic \
+		-append "console=ttyS0 panic=1" \
+		-no-reboot \
+		-enable-kvm 2>/dev/null || \
+	qemu-system-x86_64 \
+		-kernel $(BUILD_DIR)/bzImage \
+		-initrd $(BUILD_DIR)/initramfs.cpio.gz \
+		-nographic \
+		-no-reboot \
+		-append "console=ttyS0 panic=1"
+
 clean:
 	sudo rm -rf $(BUILD_DIR)
 	docker rmi \
@@ -38,4 +53,5 @@ help:
 	@echo "  extract  - Build and extract kernel, busybox, and initramfs"
 	@echo "  rebuild  - Clean build without cache, then extract"
 	@echo "  clean    - Remove build artifacts and project Docker images"
+	@echo "  test     - Boot kernel in QEMU"
 	@echo "  help     - Show this help"
