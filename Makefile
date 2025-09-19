@@ -17,6 +17,16 @@ extract: build
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
 		$(IMAGE_NAME)-initramfs sh -c "cp /initramfs.cpio.gz /host"
 
+extract-all: build
+	mkdir -p $(BUILD_DIR)
+	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
+		$(IMAGE_NAME)-kernel sh -c "cp -r /kernel /host"
+	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
+		$(IMAGE_NAME)-busybox sh -c "cp -r /busybox /host"
+	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
+		$(IMAGE_NAME)-initramfs \
+		sh -c "cp -r /initramfs /host && cp /initramfs.cpio.gz /host"
+
 rebuild:
 	docker build --no-cache \
 		--target kernel-builder -t $(IMAGE_NAME)-kernel .
@@ -50,8 +60,9 @@ clean:
 
 help:
 	@echo "Available targets:"
-	@echo "  extract  - Build and extract kernel, busybox, and initramfs"
-	@echo "  rebuild  - Clean build without cache, then extract"
-	@echo "  clean    - Remove build artifacts and project Docker images"
-	@echo "  test     - Boot kernel in QEMU"
-	@echo "  help     - Show this help"
+	@echo "  extract      - Build and extract kernel, busybox, and initramfs"
+	@echo "  extract-all  - Build and extract all artifacts"
+	@echo "  rebuild      - Clean build without cache, then extract"
+	@echo "  clean        - Remove build artifacts and project Docker images"
+	@echo "  test         - Boot kernel in QEMU"
+	@echo "  help         - Show this help"
