@@ -1,7 +1,7 @@
 IMAGE_NAME := untitled
 BUILD_DIR := build
 
-.PHONY: all build extract rebuild clean
+.PHONY: all build extract rebuild clean help
 
 all: extract
 
@@ -32,3 +32,10 @@ clean:
 		$(IMAGE_NAME)-kernel \
 		$(IMAGE_NAME)-busybox \
 		$(IMAGE_NAME)-initramfs 2>/dev/null || true
+
+help:
+	@echo "Available targets:"
+	@echo "  extract  - Build and extract kernel, busybox, and initramfs"
+	@echo "  rebuild  - Clean build without cache, then extract"
+	@echo "  clean    - Remove build artifacts and project Docker images"
+	@echo "  help     - Show this help"
