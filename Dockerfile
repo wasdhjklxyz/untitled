@@ -42,6 +42,7 @@ RUN wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2 \
     && make O=/busybox defconfig
 WORKDIR /busybox
 RUN sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config \
+    && sed -i 's/CONFIG_TC=y/# CONFIG_TC is not set/' .config \
     && make oldconfig \
     && make -j$(nproc) \
     && make install
