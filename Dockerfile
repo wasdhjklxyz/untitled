@@ -1,8 +1,15 @@
 FROM alpine:latest AS base
-RUN apk add --no-cache wget build-base
+RUN apk add --no-cache \
+    wget \
+    build-base \
+    linux-headers \
+    bash \
+    bc \
+    bison \
+    flex \
+    elfutils-dev
 
 FROM base AS kernel-builder
-RUN apk add --no-cache linux-headers bash bc bison flex elfutils-dev
 WORKDIR /src
 RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.47.tar.xz \
     && tar -xf linux-6.12.47.tar.xz \
