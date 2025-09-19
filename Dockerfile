@@ -50,11 +50,11 @@ RUN sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config \
 FROM base AS initramfs-builder
 COPY scripts/initramfs-init.sh /tmp/init
 RUN mkdir -p /initramfs
-COPY --from=busybox-builder /busybox/_install/* /initramfs
-RUN mkdir -p /initramfs/bin /initramfs/proc /initramfs/sys \
-    && cp /initramfs/busybox /initramfs/bin/busybox \
-    && ln -sf busybox /initramfs/bin/sh \
-    && cp /tmp/init /initramfs/init \
+COPY --from=busybox-builder /busybox/_install/bin /initramfs/bin
+COPY --from=busybox-builder /busybox/_install/sbin /initramfs/bin
+COPY --from=busybox-builder /busybox/_install/usr/bin /initramfs/usr/bin
+COPY --from=busybox-builder /busybox/_install/usr/sbin /initramfs/usr/sbin
+RUN cp /tmp/init /initramfs/init \
     && chmod +x /initramfs/init
 WORKDIR /initramfs
 RUN find . -print0 \
