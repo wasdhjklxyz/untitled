@@ -34,7 +34,9 @@ RUN wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2 \
     && mkdir -p /busybox \
     && make O=/busybox allnoconfig
 WORKDIR /busybox
-RUN make LDFLAGS="-static" CONFIG_STATIC=y -j$(nproc) \
+RUN sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config \
+    && make oldconfig \
+    && make -j$(nproc) \
     && make install
 
 FROM base AS initramfs-builder
