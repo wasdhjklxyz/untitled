@@ -30,6 +30,7 @@ RUN /src/linux-6.12.47/scripts/config \
     --enable CONFIG_SERIAL_8250_CONSOLE \
     --enable CONFIG_PROC_FS \
     --enable CONFIG_SYS \
+    --enable CONFIG_MODULES \
     && make olddefconfig \
     && make -j$(nproc)
 
