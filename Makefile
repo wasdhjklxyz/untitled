@@ -7,6 +7,7 @@ all: extract
 
 build:
 	docker build --target kernel-builder -t $(IMAGE_NAME)-kernel .
+	docker build --target untitled-builder -t $(IMAGE_NAME)-untitled .
 	docker build --target busybox-builder -t $(IMAGE_NAME)-busybox .
 	docker build --target initramfs-builder -t $(IMAGE_NAME)-initramfs .
 
@@ -55,6 +56,7 @@ clean:
 	sudo rm -rf $(BUILD_DIR)
 	docker rmi \
 		$(IMAGE_NAME)-kernel \
+		$(IMAGE_NAME)-untitled \
 		$(IMAGE_NAME)-busybox \
 		$(IMAGE_NAME)-initramfs 2>/dev/null || true
 

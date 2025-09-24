@@ -34,6 +34,11 @@ RUN /src/linux-6.12.47/scripts/config \
     && make olddefconfig \
     && make -j$(nproc)
 
+FROM kernel-builder AS untitled-builder
+WORKDIR /untitled
+COPY ./src ./
+RUN make -C /kernel M=$PWD
+
 FROM base AS busybox-builder
 WORKDIR /src
 RUN wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2 \
@@ -55,6 +60,7 @@ COPY --from=busybox-builder /busybox/_install/bin /initramfs/bin
 COPY --from=busybox-builder /busybox/_install/sbin /initramfs/bin
 COPY --from=busybox-builder /busybox/_install/usr/bin /initramfs/usr/bin
 COPY --from=busybox-builder /busybox/_install/usr/sbin /initramfs/usr/sbin
+COPY --from=untitled-builder /untitled /initramfs/lib/modules/6.12.47/untitled
 RUN cp /tmp/init /initramfs/init \
     && chmod +x /initramfs/init
 WORKDIR /initramfs
