@@ -32,6 +32,7 @@ RUN /src/linux-6.12.47/scripts/config \
     --enable CONFIG_SYS \
     --enable CONFIG_MODULES \
     --enable CONFIG_MODULE_UNLOAD \
+    --enable CONFIG_NET \
     && make olddefconfig \
     && make -j$(nproc)
 
