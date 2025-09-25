@@ -14,7 +14,7 @@ build:
 extract: build
 	mkdir -p $(BUILD_DIR)
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
-		$(IMAGE_NAME)-kernel sh -c "cp /kernel/arch/x86_64/boot/bzImage /host"
+		$(IMAGE_NAME)-kernel sh -c "cp /kernel/build/arch/x86_64/boot/bzImage /host"
 	docker run --rm -v $(shell pwd)/$(BUILD_DIR):/host \
 		$(IMAGE_NAME)-initramfs sh -c "cp /initramfs.cpio /host"
 
