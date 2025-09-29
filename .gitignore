@@ -4,3 +4,7 @@
 *.ko
 *.order
 *.symvers*
+
+compile_commands.json
+.cache
+.clangd
