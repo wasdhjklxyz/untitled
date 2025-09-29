@@ -1,6 +1,6 @@
 #include <linux/init.h>
 #include <linux/module.h>
-MODULE_LICENSE("MIT");
+MODULE_LICENSE("GPL-2.0");
 
 static int hello_init(void) {
   printk(KERN_ALERT "hello world\n");
