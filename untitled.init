@@ -1,0 +1,20 @@
+#!/bin/sh
+
+MODULE="untitled"
+
+case "$1" in
+  "start")
+    insmod "$MODULE.ko"
+    ;;
+  "stop")
+    rmmod "$MODULE"
+    ;;
+  "restart")
+    rmmod "$MODULE"
+    insmod "$MODULE.ko"
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    return 1
+    ;;
+esac
