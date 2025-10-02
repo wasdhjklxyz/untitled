@@ -1,6 +1,7 @@
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/module.h>
+#include <linux/cdev.h>
 
 #include "untitled.h"
 
@@ -51,14 +52,32 @@ static int hello_init(void)
 	int ret = alloc_chrdev_region(&dev, MINOR(dev), nr_devs, "untitled");
 	if (ret < 0) {
 		printk(KERN_WARNING "Error: alloc_chrdev_region\n");
+		return ret;
+	}
+
+	struct cdev *untitled_cdev = cdev_alloc();
+	if (!untitled_cdev) {
+		printk(KERN_WARNING "Error: cdev_alloc\n");
+		return 1;
+	}
+
+	cdev_init(untitled_cdev, &fops);
+	untitled_cdev->owner = THIS_MODULE;
+
+	ret = cdev_add(untitled_cdev, dev, 1);
+	if (ret < 0) {
+		printk(KERN_WARNING "Error: cdev_add\n");
+		return ret;
 	}
 
 	// TODO: Wait for chrdev files to be created?
-	return ret;
+	return 0;
 }
 
 static void hello_exit(void)
 {
+	// TODO: cdev_del(untitled_cdev);
+
 	unregister_chrdev_region(dev, nr_devs);
 
 	printk(KERN_ALERT "goodbye\n");
