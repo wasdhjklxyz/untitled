@@ -1,11 +1,11 @@
 #!/bin/sh
 
-MODULE="untitled"
+DEVICE="untitled"
 
 function load_module() {
   # NOTE: Have to load module before device creation (dynamic alloc major num)
-  insmod "$MODULE.ko"
-  MAJOR=`awk "\\$2==\"$MODULE\" {print \\$1}" /proc/devices`
+  insmod "$DEVICE.ko"
+  MAJOR=`awk "\\$2==\"$DEVICE\" {print \\$1}" /proc/devices`
   echo "MAJOR: ${MAJOR}"
 }
 
@@ -14,10 +14,10 @@ case "$1" in
     load_module
     ;;
   "stop")
-    rmmod "$MODULE"
+    rmmod "$DEVICE"
     ;;
   "restart")
-    rmmod "$MODULE"
+    rmmod "$DEVICE"
     load_module
     ;;
   *)
