@@ -1,5 +1,3 @@
-obj-m := untitled.o
-
 .PHONY: all clean
 
 all:
