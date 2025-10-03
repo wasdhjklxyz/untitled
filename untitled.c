@@ -51,13 +51,13 @@ static int hello_init(void)
 
 	int ret = alloc_chrdev_region(&dev, MINOR(dev), nr_devs, "untitled");
 	if (ret < 0) {
-		printk(KERN_WARNING "Error: alloc_chrdev_region\n");
+		printk(KERN_ERR "Error: alloc_chrdev_region\n");
 		return ret;
 	}
 
 	struct cdev *untitled_cdev = cdev_alloc();
 	if (!untitled_cdev) {
-		printk(KERN_WARNING "Error: cdev_alloc\n");
+		printk(KERN_ERR "Error: cdev_alloc\n");
 		return 1;
 	}
 
@@ -66,7 +66,7 @@ static int hello_init(void)
 
 	ret = cdev_add(untitled_cdev, dev, 1);
 	if (ret < 0) {
-		printk(KERN_WARNING "Error: cdev_add\n");
+		printk(KERN_ERR "Error: cdev_add\n");
 		return ret;
 	}
 
