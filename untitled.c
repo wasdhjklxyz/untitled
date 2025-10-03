@@ -37,6 +37,11 @@ ssize_t untitled_write(struct file *filp, const char __user *buf, size_t count,
 int untitled_open(struct inode *inode, struct file *filp)
 {
 	printk(KERN_DEBUG "untitled: open");
+
+	struct untitled_dev *dev;
+	dev = container_of(inode->i_cdev, struct untitled_dev, cdev);
+	filp->private_data = dev;
+
 	return 0;
 }
 
