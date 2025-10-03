@@ -64,13 +64,13 @@ static int hello_init(void)
 	cdev_init(untitled_cdev, &fops);
 	untitled_cdev->owner = THIS_MODULE;
 
-	ret = cdev_add(untitled_cdev, dev, 1);
+	// TODO: Wait for device files to be created before adding?
+	ret = cdev_add(untitled_cdev, MINOR(dev), 1);
 	if (ret < 0) {
 		printk(KERN_ERR "Error: cdev_add\n");
 		return ret;
 	}
 
-	// TODO: Wait for chrdev files to be created?
 	return 0;
 }
 
