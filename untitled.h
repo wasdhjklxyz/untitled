@@ -9,6 +9,11 @@
 
 struct cdev *untitled_cdev;
 
+struct untitled_qset {
+	void **data;
+	struct untitled_qset *next;
+};
+
 struct untitled_dev {
 	struct untitled_qset *data;
 	int quantum;
@@ -25,5 +30,7 @@ ssize_t untitled_write(struct file *filp, const char __user *buf, size_t count,
 		       loff_t *pos);
 int untitled_open(struct inode *inode, struct file *filp);
 int untitled_release(struct inode *inode, struct file *filp);
+
+void untitled_trim(struct untitled_dev *dev);
 
 #endif

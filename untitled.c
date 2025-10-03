@@ -3,6 +3,7 @@
 #include <linux/module.h>
 #include <linux/cdev.h>
 #include <linux/kdev_t.h>
+#include <linux/slab.h>
 
 #include "untitled.h"
 
@@ -37,11 +38,12 @@ ssize_t untitled_write(struct file *filp, const char __user *buf, size_t count,
 int untitled_open(struct inode *inode, struct file *filp)
 {
 	printk(KERN_DEBUG "untitled: open");
-
 	struct untitled_dev *dev;
 	dev = container_of(inode->i_cdev, struct untitled_dev, cdev);
 	filp->private_data = dev;
-
+	if ((filp->f_flags & O_ACCMODE) == O_WRONLY) {
+		untitled_trim(dev);
+	}
 	return 0;
 }
 
@@ -49,6 +51,23 @@ int untitled_release(struct inode *inode, struct file *filp)
 {
 	printk(KERN_DEBUG "untitled: release");
 	return 0;
+}
+
+void untitled_trim(struct untitled_dev *dev)
+{
+	struct untitled_qset *next, *dptr;
+	int qset = dev->qset;
+	for (dptr = dev->data; dptr; dptr = next) {
+		if (dptr->data) {
+			for (int i = 0; i < qset; i++) {
+				kfree(dptr->data[i]);
+			}
+			kfree(dptr->data);
+			dptr->data = NULL;
+		}
+		next = dptr->next;
+		kfree(dptr);
+	}
 }
 
 static int hello_init(void)
