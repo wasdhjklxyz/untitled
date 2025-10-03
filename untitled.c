@@ -4,6 +4,7 @@
 #include <linux/cdev.h>
 #include <linux/kdev_t.h>
 #include <linux/slab.h>
+#include <linux/errno.h>
 
 #include "untitled.h"
 
@@ -31,8 +32,26 @@ ssize_t untitled_read(struct file *filp, char __user *buf, size_t count,
 ssize_t untitled_write(struct file *filp, const char __user *buf, size_t count,
 		       loff_t *pos)
 {
-	printk(KERN_DEBUG "untitled: write");
-	return 0;
+	// FIXME: Statically allocate
+	char *kbuf = kmalloc(count + 1, GFP_KERNEL);
+	if (!kbuf) {
+		printk(KERN_ERR "untitled: write error: kmalloc");
+		return -ENOMEM;
+	}
+
+	unsigned long tbc = copy_from_user(kbuf, buf, count);
+	if (tbc != 0) {
+		printk(KERN_DEBUG "untitled: write: partial copy (%lu/%lu)",
+		       tbc, count);
+		return -EFAULT;
+	}
+
+	kbuf[count] = '\0';
+	*pos += count;
+	printk(KERN_ALERT "untitled: write: %s", kbuf);
+	kfree(kbuf);
+
+	return count;
 }
 
 int untitled_open(struct inode *inode, struct file *filp)
