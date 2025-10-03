@@ -2,6 +2,7 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/cdev.h>
+#include <linux/kdev_t.h>
 
 #include "untitled.h"
 
@@ -65,7 +66,7 @@ static int hello_init(void)
 	untitled_cdev->owner = THIS_MODULE;
 
 	// TODO: Wait for device files to be created before adding?
-	ret = cdev_add(untitled_cdev, MINOR(dev), 1);
+	ret = cdev_add(untitled_cdev, dev, nr_devs);
 	if (ret < 0) {
 		printk(KERN_ERR "Error: cdev_add\n");
 		return ret;
