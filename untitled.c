@@ -55,7 +55,7 @@ static int hello_init(void)
 		return ret;
 	}
 
-	struct cdev *untitled_cdev = cdev_alloc();
+	untitled_cdev = cdev_alloc();
 	if (!untitled_cdev) {
 		printk(KERN_ERR "Error: cdev_alloc\n");
 		return 1;
@@ -76,7 +76,7 @@ static int hello_init(void)
 
 static void hello_exit(void)
 {
-	// TODO: cdev_del(untitled_cdev);
+	cdev_del(untitled_cdev);
 
 	unregister_chrdev_region(dev, nr_devs);
 
