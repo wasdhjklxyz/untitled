@@ -68,6 +68,10 @@ void untitled_trim(struct untitled_dev *dev)
 		next = dptr->next;
 		kfree(dptr);
 	}
+	dev->size = 0;
+	dev->qset = UNTITLED_QSET;
+	dev->quantum = UNTITLED_QUANTUM;
+	dev->data = NULL;
 }
 
 static int hello_init(void)

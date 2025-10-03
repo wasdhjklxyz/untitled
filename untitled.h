@@ -7,6 +7,9 @@
 #include <linux/semaphore.h>
 #include <linux/cdev.h>
 
+#define UNTITLED_QSET 64
+#define UNTITLED_QUANTUM 64
+
 struct cdev *untitled_cdev;
 
 struct untitled_qset {
