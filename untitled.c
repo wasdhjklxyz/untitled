@@ -4,6 +4,8 @@
 
 MODULE_LICENSE("GPL-2.0");
 
+#define UNTITLED_TIMEOUT 5 // NOTE: In jiffies
+
 struct net_device *dev; // FIXME: Stupid
 
 static int untitled_open(struct net_device *dev)
@@ -69,6 +71,7 @@ static void untitled_probe(struct net_device *dev)
 	printk(KERN_ALERT "untitled: probe\n");
 
 	ether_setup(dev);
+	dev->watchdog_timeo = UNTITLED_TIMEOUT;
 	dev->netdev_ops = &untitled_netdev_ops;
 }
 
