@@ -85,6 +85,17 @@ struct untitled_priv {
 	spinlock_t lock;
 };
 
+static void untitled_rx_ints(struct net_device *dev, int enable)
+{
+	struct untitled_priv *priv = netdev_priv(dev);
+	if (!priv) {
+		printk(KERN_WARNING
+		       "untitled: rx_ints: netdev_priv returned NULL\n");
+		return;
+	}
+	priv->rx_int_enabled = enable;
+}
+
 static void untitled_probe(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: probe\n");
@@ -101,6 +112,7 @@ static void untitled_probe(struct net_device *dev)
 	}
 	memset(priv, 0, sizeof(struct untitled_priv));
 	spin_lock_init(&priv->lock);
+	untitled_rx_ints(dev, 1); // NOTE: Enable receive interrupts
 }
 
 static int hello_init(void)
