@@ -9,6 +9,25 @@ MODULE_LICENSE("GPL-2.0");
 
 struct net_device *dev; // FIXME: Stupid
 
+struct untitled_packet {
+	struct untitled_packet *next;
+	struct net_device *dev;
+	int datalen;
+	u8 data[ETH_DATA_LEN];
+};
+
+struct untitled_priv {
+	struct net_device_stats stats;
+	int status;
+	struct untitled_packet **ppool;
+	struct untitled_packet *rx_queue; // NOTE: List of incoming packets
+	int rx_int_enabled;
+	int tx_packetlen;
+	u8 *tx_packetdata;
+	struct sk_buff *skb;
+	spinlock_t lock;
+};
+
 static int untitled_open(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: open\n");
@@ -45,7 +64,12 @@ static int untitled_set_config(struct net_device *dev, struct ifmap *map)
 static struct net_device_stats *untitled_get_stats(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: get_stats\n");
-	return NULL;
+	struct untitled_priv *priv = netdev_priv(dev);
+	if (!priv) {
+		printk(KERN_WARNING
+		       "untitled: get_stats: netdev_priv returned NULL\n");
+	}
+	return &priv->stats;
 }
 
 static int untitled_change_mtu(struct net_device *dev, int new_mtu)
@@ -68,25 +92,6 @@ static const struct net_device_ops untitled_netdev_ops = {
 	.ndo_get_stats = untitled_get_stats,
 	.ndo_change_mtu = untitled_change_mtu,
 	.ndo_tx_timeout = untitled_tx_timeout,
-};
-
-struct untitled_packet {
-	struct untitled_packet *next;
-	struct net_device *dev;
-	int datalen;
-	u8 data[ETH_DATA_LEN];
-};
-
-struct untitled_priv {
-	struct net_device_stats stats;
-	int status;
-	struct untitled_packet **ppool;
-	struct untitled_packet *rx_queue; // NOTE: List of incoming packets
-	int rx_int_enabled;
-	int tx_packetlen;
-	u8 *tx_packetdata;
-	struct sk_buff *skb;
-	spinlock_t lock;
 };
 
 static void untitled_rx_ints(struct net_device *dev, int enable)
