@@ -73,6 +73,7 @@ static void untitled_probe(struct net_device *dev)
 	ether_setup(dev);
 	dev->watchdog_timeo = UNTITLED_TIMEOUT;
 	dev->netdev_ops = &untitled_netdev_ops;
+	dev->flags |= IFF_NOARP; // NOTE: We do not have ARP implementation
 }
 
 static int hello_init(void)
