@@ -1,6 +1,7 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/netdevice.h>
+#include <linux/etherdevice.h>
 
 MODULE_LICENSE("GPL-2.0");
 
@@ -11,12 +12,15 @@ struct net_device *dev; // FIXME: Stupid
 static int untitled_open(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: open\n");
+	eth_hw_addr_set(dev, "\0UNTITLED"); // NOTE: Fakes a hardware number
+	netif_start_queue(dev);
 	return 0;
 }
 
 static int untitled_stop(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: stop\n");
+	netif_stop_queue(dev);
 	return 0;
 }
 
