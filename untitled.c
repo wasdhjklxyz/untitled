@@ -15,7 +15,7 @@ static int hello_init(void)
 {
 	printk(KERN_ALERT "hello world\n");
 
-	dev = alloc_netdev(0, "untitled%d", 1, untitled_setup);
+	dev = alloc_netdev(0, "untitled%d", NET_NAME_UNKNOWN, untitled_setup);
 	if (!dev) {
 		printk(KERN_ERR "untitled: alloc_netdev\n");
 		return -ENOMEM;
