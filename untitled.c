@@ -66,6 +66,25 @@ static const struct net_device_ops untitled_netdev_ops = {
 	.ndo_tx_timeout = untitled_tx_timeout,
 };
 
+struct untitled_packet {
+	struct untitled_packet *next;
+	struct net_device *dev;
+	int datalen;
+	u8 data[ETH_DATA_LEN];
+};
+
+struct untitled_priv {
+	struct net_device_stats stats;
+	int status;
+	struct untitled_packet **ppool;
+	struct untitled_packet *rx_queue; // NOTE: List of incoming packets
+	int rx_int_enabled;
+	int tx_packetlen;
+	u8 *tx_packetdata;
+	struct sk_buff *skb;
+	spinlock_t lock;
+};
+
 static void untitled_probe(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: probe\n");
@@ -74,6 +93,14 @@ static void untitled_probe(struct net_device *dev)
 	dev->watchdog_timeo = UNTITLED_TIMEOUT;
 	dev->netdev_ops = &untitled_netdev_ops;
 	dev->flags |= IFF_NOARP; // NOTE: We do not have ARP implementation
+
+	struct untitled_priv *priv = netdev_priv(dev);
+	if (!priv) {
+		printk(KERN_WARNING
+		       "untitled: probe: netdev_priv returned NULL\n");
+	}
+	memset(priv, 0, sizeof(struct untitled_priv));
+	spin_lock_init(&priv->lock);
 }
 
 static int hello_init(void)
