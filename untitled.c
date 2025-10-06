@@ -6,16 +6,16 @@ MODULE_LICENSE("GPL-2.0");
 
 struct net_device *dev; // FIXME: Stupid
 
-static void untitled_setup(struct net_device *dev)
+static void untitled_probe(struct net_device *dev)
 {
-	printk(KERN_ALERT "untitled: setup\n");
+	printk(KERN_ALERT "untitled: probe\n");
 }
 
 static int hello_init(void)
 {
 	printk(KERN_ALERT "hello world\n");
 
-	dev = alloc_netdev(0, "untitled%d", NET_NAME_UNKNOWN, untitled_setup);
+	dev = alloc_netdev(0, "untitled%d", NET_NAME_UNKNOWN, untitled_probe);
 	if (!dev) {
 		printk(KERN_ERR "untitled: alloc_netdev\n");
 		return -ENOMEM;
