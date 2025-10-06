@@ -134,15 +134,12 @@ static int hello_init(void)
 		return -ENOMEM;
 	}
 
-	/*
-	// TODO: Initialization must be complete before register_netdev()
 	int err = register_netdev(dev);
 	if (err) {
 		printk(KERN_ERR "untitled: register_netdev\n");
 		free_netdev(dev);
 		return err;
 	}
-	*/
 
 	return 0;
 }
@@ -151,7 +148,7 @@ static void hello_exit(void)
 {
 	printk(KERN_ALERT "goodbye\n");
 
-	// TODO: unregister_netdev(dev);
+	unregister_netdev(dev);
 	free_netdev(dev);
 }
 
