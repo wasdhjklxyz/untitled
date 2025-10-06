@@ -68,6 +68,7 @@ static void untitled_probe(struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: probe\n");
 
+	ether_setup(dev);
 	dev->netdev_ops = &untitled_netdev_ops;
 }
 
