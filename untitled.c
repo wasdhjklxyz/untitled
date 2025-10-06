@@ -21,16 +21,15 @@ static int hello_init(void)
 		return -ENOMEM;
 	}
 
-	// TODO: Device setup
-
 	/*
+	// TODO: Initialization must be complete before register_netdev()
 	int err = register_netdev(dev);
 	if (err) {
 		printk(KERN_ERR "untitled: register_netdev\n");
 		free_netdev(dev);
 		return err;
 	}
-  */
+	*/
 
 	return 0;
 }
