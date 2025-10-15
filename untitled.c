@@ -2,6 +2,8 @@
 #include <linux/module.h>
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
+#include <linux/skbuff.h>
+#include <linux/if_ether.h>
 
 MODULE_LICENSE("GPL-2.0");
 
@@ -43,9 +45,36 @@ static int untitled_stop(struct net_device *dev)
 	return 0;
 }
 
+static void untitled_tx(unsigned char *buf, unsigned int len,
+			struct net_device *dev)
+{
+	printk(KERN_ALERT "untitled: tx\n");
+}
+
 static int untitled_start_xmit(struct sk_buff *skb, struct net_device *dev)
 {
 	printk(KERN_ALERT "untitled: start_xmit\n");
+
+	struct untitled_priv *priv = netdev_priv(dev);
+	if (!priv) {
+		printk(KERN_WARNING
+		       "untitled: start_xmit: netdev_priv returned NULL\n");
+	}
+
+	unsigned char *data = skb->data;
+	unsigned int len = skb->len;
+	unsigned char shortpkt[ETH_ZLEN];
+	if (len < ETH_ZLEN) {
+		memset(shortpkt, 0, ETH_ZLEN);
+		memcpy(shortpkt, skb->data, skb->len);
+		len = ETH_ZLEN;
+		data = shortpkt;
+	}
+	netif_trans_update(dev); // FIXME: Legacy?
+
+	priv->skb = skb;
+	untitled_tx(data, len, dev);
+
 	return 0;
 }
 
